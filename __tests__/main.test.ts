@@ -8,6 +8,8 @@
 
 import * as core from '@actions/core'
 import * as main from '../src/main'
+import * as commit from '../src/commit-details'
+import * as awell from '../src/awell-gql'
 
 // Mock the action's main function
 const runMock = jest.spyOn(main, 'run')
@@ -18,9 +20,12 @@ const timeRegex = /^\d{2}:\d{2}:\d{2}/
 // Mock the GitHub Actions core library
 let debugMock: jest.SpiedFunction<typeof core.debug>
 let errorMock: jest.SpiedFunction<typeof core.error>
+let warningMock: jest.SpiedFunction<typeof core.warning>
 let getInputMock: jest.SpiedFunction<typeof core.getInput>
 let setFailedMock: jest.SpiedFunction<typeof core.setFailed>
 let setOutputMock: jest.SpiedFunction<typeof core.setOutput>
+let getCommitDetailsMock: jest.SpiedFunction<typeof commit.getCommitDetails>
+let markReleaseAsLiveMock: jest.SpiedFunction<typeof awell.markReleaseAsLive>
 
 describe('action', () => {
   beforeEach(() => {
@@ -28,17 +33,24 @@ describe('action', () => {
 
     debugMock = jest.spyOn(core, 'debug').mockImplementation()
     errorMock = jest.spyOn(core, 'error').mockImplementation()
+    warningMock = jest.spyOn(core, 'warning').mockImplementation()
     getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
     setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
     setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
+    getCommitDetailsMock = jest
+      .spyOn(commit, 'getCommitDetails')
+      .mockResolvedValue({ release_id: 'abc', definition_id: 'def' })
+    markReleaseAsLiveMock = jest
+      .spyOn(awell, 'markReleaseAsLive')
+      .mockResolvedValue()
   })
 
-  it('sets the time output', async () => {
+  it('Run the main function, test success', async () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'milliseconds':
-          return '500'
+        case 'github-token':
+          return 'tok'
         default:
           return ''
       }
@@ -48,42 +60,23 @@ describe('action', () => {
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'Waiting 500 milliseconds ...')
+    expect(debugMock).toHaveBeenNthCalledWith(1, 'tok')
     expect(debugMock).toHaveBeenNthCalledWith(
       2,
-      expect.stringMatching(timeRegex)
+      `Release ID: abc, Definition ID: def`
     )
-    expect(debugMock).toHaveBeenNthCalledWith(
-      3,
-      expect.stringMatching(timeRegex)
-    )
-    expect(setOutputMock).toHaveBeenNthCalledWith(
-      1,
-      'time',
-      expect.stringMatching(timeRegex)
-    )
+    expect(setOutputMock).toHaveBeenNthCalledWith(1, 'release_id', 'abc')
+    expect(setOutputMock).toHaveBeenNthCalledWith(2, 'definition_id', 'def')
     expect(errorMock).not.toHaveBeenCalled()
   })
 
   it('sets a failed status', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation(name => {
-      switch (name) {
-        case 'milliseconds':
-          return 'this is not a number'
-        default:
-          return ''
-      }
+    getCommitDetailsMock.mockImplementationOnce(() => {
+      throw new Error('test error')
     })
-
     await main.run()
     expect(runMock).toHaveReturned()
-
-    // Verify that all of the core library functions were called correctly
-    expect(setFailedMock).toHaveBeenNthCalledWith(
-      1,
-      'milliseconds not a number'
-    )
-    expect(errorMock).not.toHaveBeenCalled()
+    expect(setFailedMock).toHaveBeenNthCalledWith(1, 'test error')
+    expect(errorMock).toHaveBeenCalledTimes(2)
   })
 })

@@ -1,26 +1,24 @@
 import * as core from '@actions/core'
-import { wait } from './wait'
+import { getCommitDetails } from './commit-details'
+import { markReleaseAsLive } from './awell-gql'
 
-/**
- * The main function for the action.
- * @returns {Promise<void>} Resolves when the action is complete.
- */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-
+    const token = core.getInput('github-token')
+    core.debug(token)
+    const { release_id, definition_id } = await getCommitDetails(token)
+    core.setOutput('release_id', release_id)
+    core.setOutput('definition_id', definition_id)
     // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    core.debug(`Release ID: ${release_id}, Definition ID: ${definition_id}`)
+    // Assuming the details are valid, mark the release as live
+    await markReleaseAsLive({ release_id, definition_id })
   } catch (error) {
     // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    core.error('There was an error running the action')
+    if (error instanceof Error) {
+      core.error(error)
+      core.setFailed(error.message)
+    }
   }
 }
