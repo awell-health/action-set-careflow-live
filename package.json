@@ -1,21 +1,22 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
-  "author": "",
-  "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "name": "set-careflow-live",
+  "description": "Use publish and source control to run tests and automatically set a care flow to live if the tests pass",
+  "version": "1.0.0",
+  "author": "awell-health",
+  "private": false,
+  "homepage": "https://github.com/awell-health/set-careflow-live",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/awell-health/set-careflow-live.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/awell-health/set-careflow-live/issues"
   },
   "keywords": [
-    "actions",
+    "awell",
     "node",
-    "setup"
+    "careops",
+    "action"
   ],
   "exports": {
     ".": "./dist/index.js"
