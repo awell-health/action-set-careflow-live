@@ -37,7 +37,8 @@ describe('awell-gql', () => {
       variables: {
         input: mockVariables
       }
-    })
+    }),
+    method: 'POST'
   }
   const mockError = new Error('Request failed.')
   const mockErrorWithData = new ErrorWithData({

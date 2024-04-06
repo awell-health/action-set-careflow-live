@@ -37,20 +37,22 @@ describe('action', () => {
     getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
     setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
     setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
-    getCommitDetailsMock = jest
-      .spyOn(commit, 'getCommitDetails')
-      .mockResolvedValue({ release_id: 'abc', definition_id: 'def' })
     markReleaseAsLiveMock = jest
       .spyOn(awell, 'markReleaseAsLive')
       .mockResolvedValue()
   })
 
   it('Run the main function, test success', async () => {
+    getCommitDetailsMock = jest
+      .spyOn(commit, 'getCommitDetails')
+      .mockResolvedValueOnce({ release_id: 'abc', definition_id: 'def' })
     // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation(name => {
+    getInputMock.mockImplementationOnce(name => {
       switch (name) {
         case 'github-token':
           return 'tok'
+        case 'test-mode':
+          return 'false'
         default:
           return ''
       }
@@ -60,13 +62,49 @@ describe('action', () => {
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(1, 'tok')
     expect(debugMock).toHaveBeenNthCalledWith(
-      2,
+      1,
       `Release ID: abc, Definition ID: def`
     )
     expect(setOutputMock).toHaveBeenNthCalledWith(1, 'release_id', 'abc')
     expect(setOutputMock).toHaveBeenNthCalledWith(2, 'definition_id', 'def')
+    expect(errorMock).not.toHaveBeenCalled()
+  })
+
+  it('Run the main function, test success in test mode', async () => {
+    // Set the action's inputs as return values from core.getInput()
+    getInputMock.mockImplementation(name => {
+      switch (name) {
+        case 'github-token':
+          return 'tok'
+        case 'test-mode':
+          return 'true'
+        case 'release-id':
+          return 'test-release-id'
+        case 'definition-id':
+          return 'test-definition-id'
+        default:
+          return ''
+      }
+    })
+    await main.run()
+    expect(runMock).toHaveReturned()
+
+    // Verify that all of the core library functions were called correctly
+    expect(debugMock).toHaveBeenNthCalledWith(
+      1,
+      `Release ID: test-release-id, Definition ID: test-definition-id`
+    )
+    expect(setOutputMock).toHaveBeenNthCalledWith(
+      1,
+      'release_id',
+      'test-release-id'
+    )
+    expect(setOutputMock).toHaveBeenNthCalledWith(
+      2,
+      'definition_id',
+      'test-definition-id'
+    )
     expect(errorMock).not.toHaveBeenCalled()
   })
 

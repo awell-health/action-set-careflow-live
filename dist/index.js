@@ -29013,6 +29013,8 @@ mutation MarkReleaseAsLive($input: MarkReleaseAsLiveInput!) {
   markReleaseAsLive(input: $input) {
     code
     success
+  }
+}
 `;
 async function markReleaseAsLive(variables) {
     core.debug(`Marking release_id=${variables.release_id} as live`);
@@ -29037,12 +29039,12 @@ exports.markReleaseAsLive = markReleaseAsLive;
 function url() {
     const urls = {
         local: 'http://localhost:8120/design/m2m/graphql',
-        development: 'https://devevelopment.awellhealth.com/design/m2m/graphql',
-        staging: 'https://staging.awellhealth.com/design/m2m/graphql',
-        sandbox: 'https://sandbox.awellhealth.com/design/m2m/graphql',
-        production: 'https://production.awellhealth.com/design/m2m/graphql',
-        'production-us': 'https://production-us.awellhealth.com/design/m2m/graphql',
-        'production-uk': 'https://production-uk.awellhealth.com/design/m2m/graphql'
+        development: 'https://api.development.awellhealth.com/design/m2m/graphql',
+        staging: 'https://api.staging.awellhealth.com/design/m2m/graphql',
+        sandbox: 'https://api.sandbox.awellhealth.com/design/m2m/graphql',
+        production: 'https://api.production.awellhealth.com/design/m2m/graphql',
+        'production-us': 'https://api.production-us.awellhealth.com/design/m2m/graphql',
+        'production-uk': 'https://api.production-uk.awellhealth.com/design/m2m/graphql'
     };
     const env = core.getInput('awell-environment');
     const result = urls[env];
@@ -29064,7 +29066,11 @@ function prepareRequest(variables) {
             input: variables
         }
     };
-    const result = { headers, body: JSON.stringify(body) };
+    const result = {
+        headers,
+        body: JSON.stringify(body),
+        method: 'POST'
+    };
     core.debug(`Request: ${result}`);
     return result;
 }
@@ -29104,7 +29110,15 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parse = exports.getCommitDetails = void 0;
 const errors_1 = __nccwpck_require__(6976);
 const github = __importStar(__nccwpck_require__(5438));
+const core = __importStar(__nccwpck_require__(2186));
 const getCommitDetails = async (token) => {
+    if (core.getInput('test-mode') === 'true') {
+        core.info('Running in test mode');
+        return {
+            release_id: core.getInput('release-id'),
+            definition_id: core.getInput('definition-id')
+        };
+    }
     const octokit = github.getOctokit(token);
     const response = await octokit.rest.repos.getCommit({
         ...github.context.repo,
@@ -29193,7 +29207,6 @@ const awell_gql_1 = __nccwpck_require__(5182);
 async function run() {
     try {
         const token = core.getInput('github-token');
-        core.debug(token);
         const { release_id, definition_id } = await (0, commit_details_1.getCommitDetails)(token);
         core.setOutput('release_id', release_id);
         core.setOutput('definition_id', definition_id);

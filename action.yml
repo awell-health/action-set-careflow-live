@@ -21,6 +21,16 @@ inputs:
     description: 'The Awell environment to use.'
     required: true
     default: development
+  test-mode:
+    description: 'Whether to run in test mode.'
+    required: false
+  release-id:
+    description: 'The release ID to mark as live, if running in test mode.'
+    required: false
+  definition-id:
+    description:
+      'The definition ID of the repository care flow, if running in test mode.'
+    required: false
 
 # Define your outputs here.
 outputs:

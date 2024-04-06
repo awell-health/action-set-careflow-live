@@ -11,6 +11,8 @@ mutation MarkReleaseAsLive($input: MarkReleaseAsLiveInput!) {
   markReleaseAsLive(input: $input) {
     code
     success
+  }
+}
 `
 
 export async function markReleaseAsLive(
@@ -38,12 +40,14 @@ export async function markReleaseAsLive(
 function url(): string {
   const urls = {
     local: 'http://localhost:8120/design/m2m/graphql',
-    development: 'https://devevelopment.awellhealth.com/design/m2m/graphql',
-    staging: 'https://staging.awellhealth.com/design/m2m/graphql',
-    sandbox: 'https://sandbox.awellhealth.com/design/m2m/graphql',
-    production: 'https://production.awellhealth.com/design/m2m/graphql',
-    'production-us': 'https://production-us.awellhealth.com/design/m2m/graphql',
-    'production-uk': 'https://production-uk.awellhealth.com/design/m2m/graphql'
+    development: 'https://api.development.awellhealth.com/design/m2m/graphql',
+    staging: 'https://api.staging.awellhealth.com/design/m2m/graphql',
+    sandbox: 'https://api.sandbox.awellhealth.com/design/m2m/graphql',
+    production: 'https://api.production.awellhealth.com/design/m2m/graphql',
+    'production-us':
+      'https://api.production-us.awellhealth.com/design/m2m/graphql',
+    'production-uk':
+      'https://api.production-uk.awellhealth.com/design/m2m/graphql'
   }
   const env = core.getInput('awell-environment') as keyof typeof urls
   const result = urls[env]
@@ -66,7 +70,11 @@ function prepareRequest(variables: MarkReleaseAsLiveParams): RequestInit {
       input: variables
     }
   }
-  const result = { headers, body: JSON.stringify(body) }
+  const result: RequestInit = {
+    headers,
+    body: JSON.stringify(body),
+    method: 'POST'
+  }
   core.debug(`Request: ${result}`)
   return result
 }

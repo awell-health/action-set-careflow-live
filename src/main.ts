@@ -5,7 +5,6 @@ import { markReleaseAsLive } from './awell-gql'
 export async function run(): Promise<void> {
   try {
     const token = core.getInput('github-token')
-    core.debug(token)
     const { release_id, definition_id } = await getCommitDetails(token)
     core.setOutput('release_id', release_id)
     core.setOutput('definition_id', definition_id)

@@ -1,9 +1,17 @@
 import { ErrorWithData } from './errors'
 import * as github from '@actions/github'
+import * as core from '@actions/core'
 
 export const getCommitDetails = async (
   token: string
 ): Promise<ParsedCommitMessage> => {
+  if (core.getInput('test-mode') === 'true') {
+    core.info('Running in test mode')
+    return {
+      release_id: core.getInput('release-id'),
+      definition_id: core.getInput('definition-id')
+    }
+  }
   const octokit = github.getOctokit(token)
   const response = await octokit.rest.repos.getCommit({
     ...github.context.repo,
