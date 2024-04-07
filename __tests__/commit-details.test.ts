@@ -1,11 +1,3 @@
-/**
- * Unit tests for the action's main functionality, src/main.ts
- *
- * These should be run as if the action was called from a workflow.
- * Specifically, the inputs listed in `action.yml` should be set as environment
- * variables following the pattern `INPUT_<INPUT_NAME>`.
- */
-
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import * as commit from '../src/commit-details'
@@ -85,7 +77,7 @@ describe('action', () => {
       `   Version notes:\n\n      # Not markdown  \nasdf  \n# h1\nsome comments about the publish.`
     expect(() => commit.parse(commitMessage)).toThrow(
       new errors.ErrorWithData({
-        msg: 'Commit message is missing release_id (Tag) or definition_id (Care flow ID)',
+        msg: 'Commit message is missing release_id (Tag) and/or definition_id (Care flow ID)',
         data: { commitMessage }
       })
     )

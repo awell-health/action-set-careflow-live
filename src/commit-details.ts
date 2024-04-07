@@ -33,7 +33,7 @@ export function parse(commitMessage: string): ParsedCommitMessage {
   const definitionId = commitMessage.match(/Care flow ID: (.*)/)?.[1]
   if (!releaseId || !definitionId) {
     throw new ErrorWithData({
-      msg: 'Commit message is missing release_id (Tag) or definition_id (Care flow ID)',
+      msg: 'Commit message is missing release_id (Tag) and/or definition_id (Care flow ID)',
       data: { commitMessage }
     })
   }

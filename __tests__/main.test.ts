@@ -14,9 +14,6 @@ import * as awell from '../src/awell-gql'
 // Mock the action's main function
 const runMock = jest.spyOn(main, 'run')
 
-// Other utilities
-const timeRegex = /^\d{2}:\d{2}:\d{2}/
-
 // Mock the GitHub Actions core library
 let debugMock: jest.SpiedFunction<typeof core.debug>
 let errorMock: jest.SpiedFunction<typeof core.error>
@@ -62,12 +59,9 @@ describe('action', () => {
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(
-      1,
-      `Release ID: abc, Definition ID: def`
-    )
     expect(setOutputMock).toHaveBeenNthCalledWith(1, 'release_id', 'abc')
     expect(setOutputMock).toHaveBeenNthCalledWith(2, 'definition_id', 'def')
+    expect(setOutputMock).toHaveBeenNthCalledWith(3, 'result', 'success')
     expect(errorMock).not.toHaveBeenCalled()
   })
 
@@ -91,10 +85,6 @@ describe('action', () => {
     expect(runMock).toHaveReturned()
 
     // Verify that all of the core library functions were called correctly
-    expect(debugMock).toHaveBeenNthCalledWith(
-      1,
-      `Release ID: test-release-id, Definition ID: test-definition-id`
-    )
     expect(setOutputMock).toHaveBeenNthCalledWith(
       1,
       'release_id',
@@ -105,6 +95,7 @@ describe('action', () => {
       'definition_id',
       'test-definition-id'
     )
+    expect(setOutputMock).toHaveBeenNthCalledWith(3, 'result', 'success')
     expect(errorMock).not.toHaveBeenCalled()
   })
 

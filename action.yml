@@ -34,8 +34,6 @@ inputs:
 
 # Define your outputs here.
 outputs:
-  request-id:
-    description: 'The ID of the request that was sent to the Awell API.'
   result:
     description: 'The result of the request that was sent to the Awell API.'
   release_id:

@@ -18,8 +18,7 @@ describe('awell-gql', () => {
   const mockJson = jest.fn().mockResolvedValue(successData)
   const mockFetch = jest.fn().mockResolvedValue({
     ok: true,
-    json: mockJson,
-    headers: new Headers({ 'x-request-id': '123' })
+    json: mockJson
   })
   const mockUrl = 'http://localhost:8120/design/m2m/graphql'
   const mockApiKey = '1234567890'
@@ -40,7 +39,6 @@ describe('awell-gql', () => {
     }),
     method: 'POST'
   }
-  const mockError = new Error('Request failed.')
   const mockErrorWithData = new ErrorWithData({
     msg: 'Request failed.',
     data: { response: successData }
@@ -69,7 +67,6 @@ describe('awell-gql', () => {
     await markReleaseAsLive(mockVariables)
     expect(fetchMock).toHaveBeenCalledWith(mockUrl, mockRequest)
     expect(mockJson).toHaveReturned()
-    expect(setOutputMock).toHaveBeenCalledWith('result', 'success')
   })
 
   it('bad env var', async () => {

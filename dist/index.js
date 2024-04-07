@@ -29005,17 +29005,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.markReleaseAsLive = exports.MUTATION_MARK_LIVE = void 0;
+exports.MUTATION_MARK_LIVE = exports.markReleaseAsLive = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const errors_1 = __nccwpck_require__(6976);
-exports.MUTATION_MARK_LIVE = `
-mutation MarkReleaseAsLive($input: MarkReleaseAsLiveInput!) {
-  markReleaseAsLive(input: $input) {
-    code
-    success
-  }
-}
-`;
 async function markReleaseAsLive(variables) {
     core.debug(`Marking release_id=${variables.release_id} as live`);
     const response = await fetch(url(), prepareRequest(variables));
@@ -29023,17 +29015,13 @@ async function markReleaseAsLive(variables) {
         throw new Error(`Request failed with status ${response.status}`);
     }
     const json = await response.json();
-    const requestId = response.headers.get('x-request-id');
-    core.setOutput('request-id', requestId);
     core.debug(`Response JSON: ${JSON.stringify(json)}`);
     if (!json.data.markReleaseAsLive.success) {
-        core.setOutput('result', 'failure');
         throw new errors_1.ErrorWithData({
             msg: 'Request failed.',
             data: { response: json }
         });
     }
-    core.setOutput('result', 'success');
 }
 exports.markReleaseAsLive = markReleaseAsLive;
 function url() {
@@ -29074,6 +29062,14 @@ function prepareRequest(variables) {
     core.debug(`Request: ${result}`);
     return result;
 }
+exports.MUTATION_MARK_LIVE = `
+mutation MarkReleaseAsLive($input: MarkReleaseAsLiveInput!) {
+  markReleaseAsLive(input: $input) {
+    code
+    success
+  }
+}
+`;
 
 
 /***/ }),
@@ -29134,7 +29130,7 @@ function parse(commitMessage) {
     const definitionId = commitMessage.match(/Care flow ID: (.*)/)?.[1];
     if (!releaseId || !definitionId) {
         throw new errors_1.ErrorWithData({
-            msg: 'Commit message is missing release_id (Tag) or definition_id (Care flow ID)',
+            msg: 'Commit message is missing release_id (Tag) and/or definition_id (Care flow ID)',
             data: { commitMessage }
         });
     }
@@ -29210,16 +29206,16 @@ async function run() {
         const { release_id, definition_id } = await (0, commit_details_1.getCommitDetails)(token);
         core.setOutput('release_id', release_id);
         core.setOutput('definition_id', definition_id);
-        // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-        core.debug(`Release ID: ${release_id}, Definition ID: ${definition_id}`);
         // Assuming the details are valid, mark the release as live
         await (0, awell_gql_1.markReleaseAsLive)({ release_id, definition_id });
+        core.setOutput('result', 'success');
     }
     catch (error) {
         // Fail the workflow run if an error occurs
         core.error('There was an error running the action');
         if (error instanceof Error) {
             core.error(error);
+            core.setOutput('result', 'failure');
             core.setFailed(error.message);
         }
     }

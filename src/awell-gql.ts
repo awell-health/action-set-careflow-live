@@ -1,20 +1,6 @@
 import * as core from '@actions/core'
 import { ErrorWithData } from './errors'
 
-interface MarkReleaseAsLiveParams {
-  release_id: string
-  definition_id: string
-}
-
-export const MUTATION_MARK_LIVE = `
-mutation MarkReleaseAsLive($input: MarkReleaseAsLiveInput!) {
-  markReleaseAsLive(input: $input) {
-    code
-    success
-  }
-}
-`
-
 export async function markReleaseAsLive(
   variables: MarkReleaseAsLiveParams
 ): Promise<void> {
@@ -24,17 +10,13 @@ export async function markReleaseAsLive(
     throw new Error(`Request failed with status ${response.status}`)
   }
   const json = await response.json()
-  const requestId = response.headers.get('x-request-id')
-  core.setOutput('request-id', requestId)
   core.debug(`Response JSON: ${JSON.stringify(json)}`)
   if (!json.data.markReleaseAsLive.success) {
-    core.setOutput('result', 'failure')
     throw new ErrorWithData({
       msg: 'Request failed.',
       data: { response: json }
     })
   }
-  core.setOutput('result', 'success')
 }
 
 function url(): string {
@@ -78,3 +60,17 @@ function prepareRequest(variables: MarkReleaseAsLiveParams): RequestInit {
   core.debug(`Request: ${result}`)
   return result
 }
+
+interface MarkReleaseAsLiveParams {
+  release_id: string
+  definition_id: string
+}
+
+export const MUTATION_MARK_LIVE = `
+mutation MarkReleaseAsLive($input: MarkReleaseAsLiveInput!) {
+  markReleaseAsLive(input: $input) {
+    code
+    success
+  }
+}
+`
