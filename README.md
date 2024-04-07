@@ -8,7 +8,7 @@
 
 ## Usage
 
-This github action allows you to publish your care flow and allow the care flow
+This GitHub action allows you to publish your care flow and allow the care flow
 to run tests before publishing it live.
 
 ![Publish](./assets/publish.png)
@@ -45,6 +45,6 @@ feel free to get in touch!
 
 Run `npm run all` to run the suite of tests, and make sure `npm run publish` is
 run (part of `npm run all`) so the build is included in the release. The build
-pipeline was provided by [github](https://github.com/actions/typescript-action),
+pipeline was provided by [GitHub](https://github.com/actions/typescript-action),
 and the release script (to tag and push a new release) is also provided by
-github, in the `./scripts` directory.
+GitHub, in the `./scripts` directory.
