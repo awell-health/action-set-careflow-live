@@ -46,9 +46,9 @@ describe('action', () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementationOnce(name => {
       switch (name) {
-        case 'github-token':
+        case 'github_token':
           return 'tok'
-        case 'test-mode':
+        case 'test_mode':
           return 'false'
         default:
           return ''
@@ -69,13 +69,13 @@ describe('action', () => {
     // Set the action's inputs as return values from core.getInput()
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'github-token':
+        case 'github_token':
           return 'tok'
-        case 'test-mode':
+        case 'test_mode':
           return 'true'
-        case 'release-id':
+        case 'release_id':
           return 'test-release-id'
-        case 'definition-id':
+        case 'definition_id':
           return 'test-definition-id'
         default:
           return ''
@@ -105,7 +105,7 @@ describe('action', () => {
     })
     await main.run()
     expect(runMock).toHaveReturned()
-    expect(setFailedMock).toHaveBeenNthCalledWith(1, 'test error')
+    expect(setFailedMock).toHaveBeenNthCalledWith(2, 'test error')
     expect(errorMock).toHaveBeenCalledTimes(2)
   })
 })

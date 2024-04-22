@@ -32,7 +32,7 @@ steps:
     id: set-live
     uses: awell-health/set-careflow-live@v1
     with:
-      api-key: { { secrets.YOUR_API_KEY } }
+      api_key: { { secrets.YOUR_API_KEY } }
       environment: production-us
 ```
 

@@ -31,7 +31,7 @@ function url(): string {
     'production-uk':
       'https://api.production-uk.awellhealth.com/design/m2m/graphql'
   }
-  const env = core.getInput('awell-environment') as keyof typeof urls
+  const env = core.getInput('awell_environment') as keyof typeof urls
   const result = urls[env]
   if (!result) {
     throw new Error(`Unknown environment: ${env}`)
@@ -41,7 +41,7 @@ function url(): string {
 }
 
 function prepareRequest(variables: MarkReleaseAsLiveParams): RequestInit {
-  const apiKey = core.getInput('api-key')
+  const apiKey = core.getInput('api_key')
   const headers = {
     'Content-Type': 'application/json',
     apikey: apiKey

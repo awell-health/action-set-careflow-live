@@ -4,7 +4,7 @@ import { markReleaseAsLive } from './awell-gql'
 
 export async function run(): Promise<void> {
   try {
-    const token = core.getInput('github-token')
+    const token = core.getInput('github_token')
     const { release_id, definition_id } = await getCommitDetails(token)
     core.setOutput('release_id', release_id)
     core.setOutput('definition_id', definition_id)
@@ -14,6 +14,7 @@ export async function run(): Promise<void> {
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.error('There was an error running the action')
+    core.setFailed('There was an error running the action')
     if (error instanceof Error) {
       core.error(error)
       core.setOutput('result', 'failure')

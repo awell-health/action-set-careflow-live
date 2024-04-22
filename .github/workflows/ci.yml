@@ -57,12 +57,12 @@ jobs:
         id: test-action
         uses: ./
         with:
-          api-key: ${{ secrets.DEVELOPMENT_API_KEY }}
-          awell-environment: development
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-mode: 'true'
-          release-id: 'u0Ey6YPvdbWGYuwisCtwv'
-          definition-id: 'xjUdrKvscUmq'
+          api_key: ${{ secrets.DEVELOPMENT_API_KEY }}
+          awell_environment: development
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          test_mode: 'true'
+          release_id: 'u0Ey6YPvdbWGYuwisCtwv'
+          definition_id: 'xjUdrKvscUmq'
 
       - name: Print Output
         id: output

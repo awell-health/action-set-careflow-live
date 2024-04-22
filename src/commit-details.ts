@@ -5,11 +5,11 @@ import * as core from '@actions/core'
 export const getCommitDetails = async (
   token: string
 ): Promise<ParsedCommitMessage> => {
-  if (core.getInput('test-mode') === 'true') {
+  if (core.getInput('test_mode') === 'true') {
     core.info('Running in test mode')
     return {
-      release_id: core.getInput('release-id'),
-      definition_id: core.getInput('definition-id')
+      release_id: core.getInput('release_id'),
+      definition_id: core.getInput('definition_id')
     }
   }
   const octokit = github.getOctokit(token)

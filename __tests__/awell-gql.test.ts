@@ -56,9 +56,9 @@ describe('awell-gql', () => {
   it('test markReleaseAsLive success', async () => {
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'awell-environment':
+        case 'awell_environment':
           return 'local'
-        case 'api-key':
+        case 'api_key':
           return mockApiKey
         default:
           return ''
@@ -72,7 +72,7 @@ describe('awell-gql', () => {
   it('bad env var', async () => {
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'awell-environment':
+        case 'awell_environment':
           return 'bad'
         default:
           return ''
@@ -93,9 +93,9 @@ describe('awell-gql', () => {
     fetchMock.mockImplementation(failFetch)
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'awell-environment':
+        case 'awell_environment':
           return 'local'
-        case 'api-key':
+        case 'api_key':
           return mockApiKey
         default:
           return ''
@@ -123,9 +123,9 @@ describe('awell-gql', () => {
     fetchMock.mockImplementation(failFetch)
     getInputMock.mockImplementation(name => {
       switch (name) {
-        case 'awell-environment':
+        case 'awell_environment':
           return 'local'
-        case 'api-key':
+        case 'api_key':
           return mockApiKey
         default:
           return ''

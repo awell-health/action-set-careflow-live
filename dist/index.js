@@ -29034,7 +29034,7 @@ function url() {
         'production-us': 'https://api.production-us.awellhealth.com/design/m2m/graphql',
         'production-uk': 'https://api.production-uk.awellhealth.com/design/m2m/graphql'
     };
-    const env = core.getInput('awell-environment');
+    const env = core.getInput('awell_environment');
     const result = urls[env];
     if (!result) {
         throw new Error(`Unknown environment: ${env}`);
@@ -29043,7 +29043,7 @@ function url() {
     return result;
 }
 function prepareRequest(variables) {
-    const apiKey = core.getInput('api-key');
+    const apiKey = core.getInput('api_key');
     const headers = {
         'Content-Type': 'application/json',
         apikey: apiKey
@@ -29108,11 +29108,11 @@ const errors_1 = __nccwpck_require__(6976);
 const github = __importStar(__nccwpck_require__(5438));
 const core = __importStar(__nccwpck_require__(2186));
 const getCommitDetails = async (token) => {
-    if (core.getInput('test-mode') === 'true') {
+    if (core.getInput('test_mode') === 'true') {
         core.info('Running in test mode');
         return {
-            release_id: core.getInput('release-id'),
-            definition_id: core.getInput('definition-id')
+            release_id: core.getInput('release_id'),
+            definition_id: core.getInput('definition_id')
         };
     }
     const octokit = github.getOctokit(token);
@@ -29202,7 +29202,7 @@ const commit_details_1 = __nccwpck_require__(1647);
 const awell_gql_1 = __nccwpck_require__(5182);
 async function run() {
     try {
-        const token = core.getInput('github-token');
+        const token = core.getInput('github_token');
         const { release_id, definition_id } = await (0, commit_details_1.getCommitDetails)(token);
         core.setOutput('release_id', release_id);
         core.setOutput('definition_id', definition_id);
@@ -29213,6 +29213,7 @@ async function run() {
     catch (error) {
         // Fail the workflow run if an error occurs
         core.error('There was an error running the action');
+        core.setFailed('There was an error running the action');
         if (error instanceof Error) {
             core.error(error);
             core.setOutput('result', 'failure');
